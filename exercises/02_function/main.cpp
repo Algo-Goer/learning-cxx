@@ -5,6 +5,9 @@
 // NOTICE: 补充由内而外读法的机翻解释 <https://learn.microsoft.com/zh-cn/cpp/c-language/interpreting-more-complex-declarators?view=msvc-170>
 
 // TODO: 在这里声明函数
+// 声明函数
+int add(int a, int b);    //你需要在 main 函数之前声明 add 函数，告诉编译器它存在。
+
 
 int main(int argc, char **argv) {
     ASSERT(add(123, 456) == 123 + 456, "add(123, 456) should be 123 + 456");
@@ -16,4 +19,5 @@ int main(int argc, char **argv) {
 
 int add(int a, int b) {
     // TODO: 补全函数定义，但不要移动代码行
+    return a + b;
 }

@@ -1,6 +1,7 @@
 #include "../exercise.h"
 
 constexpr unsigned long long fibonacci(int i) {
+    /*
     switch (i) {
         case 0:
             return 0;
@@ -9,7 +10,17 @@ constexpr unsigned long long fibonacci(int i) {
         default:
             return fibonacci(i - 1) + fibonacci(i - 2);
     }
-}
+    */
+    if (i == 0) return 0;
+    if (i == 1) return 1;
+    unsigned long long a = 0, b = 1, temp;
+    for (int j = 2; j <= i; ++j) {
+        temp = a + b;
+        a = b;
+        b = temp;
+    }
+    return b; // 返回第 i 个斐波那契数
+}   
 
 int main(int argc, char **argv) {
     constexpr auto FIB20 = fibonacci(20);
