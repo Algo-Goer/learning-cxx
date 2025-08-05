@@ -2,7 +2,7 @@ add_rules("mode.debug", "mode.release")
 set_encodings("utf-8")
 set_warnings("all")
 set_languages("cxx17")
-set_toolchains("msvc")
+-- set_toolchains("msvc")
 
 target("test")
     set_kind("static")
