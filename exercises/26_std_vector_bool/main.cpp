@@ -62,7 +62,8 @@ int main(int argc, char **argv) {
     由于 std::vector<bool> 使用了位压缩（每个布尔值只占用 1 位），它的实际实现方式与普通 std::vector 不同。
     因此，sizeof(std::vector<bool>) 的值通常是固定的，而不是与向量的元素个数直接相关。
     */
-    ASSERT(sizeof(vec) == 32, "Fill in the correct value."); 
+    std::cout << "sizeof(vec) = " << sizeof(vec) << std::endl;
+    ASSERT(sizeof(vec) == 40, "Fill in the correct value."); 
     /*
     sizeof(std::vector<bool>) 返回的是 std::vector<bool> 对象本身占用的内存大小，包括内部实现的额外信息（如指针、大小、容量等）。
     在大多数编译器实现中，std::vector<bool> 并没有像普通类型 std::vector<T> 那样，每个元素都占用一个字节，因此总的内存占用可能较小，约为 32 字节。

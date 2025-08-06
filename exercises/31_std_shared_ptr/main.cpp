@@ -1,7 +1,6 @@
 ﻿#include "../exercise.h"
 #include <memory>
 #include <iostream>
-#include <windows.h>
 
 void print_state(const std::string& msg, const std::shared_ptr<int>& shared, std::shared_ptr<int> ptrs[], size_t size, const std::weak_ptr<int>& observer){
     std::cout << msg << "\n";
@@ -18,9 +17,6 @@ void print_state(const std::string& msg, const std::shared_ptr<int>& shared, std
 
 // TODO: 将下列 `?` 替换为正确的值
 int main(int argc, char **argv) {
-    SetConsoleOutputCP(65001); // 设置输出编码为UTF-8
-    SetConsoleCP(65001); // 设置输出编码为UTF-8
-    std::cout << u8"你好，世界！Hello, world!\n";
     
     auto shared = std::make_shared<int>(10); // shared是第一个shared_ptr，count=1
     std::shared_ptr<int> ptrs[]{shared, shared, shared}; // ptrs[0] = shared, count=2

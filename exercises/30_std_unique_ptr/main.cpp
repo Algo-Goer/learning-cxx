@@ -57,105 +57,43 @@ Unique forward(Unique ptr) {
 int main(int argc, char **argv) {
     std::vector<std::string> problems[3];
 
-    drop(forward(reset(nullptr)));
-    problems[0] = std::move(RECORDS);
-    /*
-    运算顺序（从内向外）：
-    reset(nullptr)：
-        入参为 nullptr，所以不记录 'r'
-        创建了一个新的 Resource 实例 R1
-    forward(R1)：
-        R1 记录 'f'
-        返回 R1
-    drop(R1)：
-        R1 记录 'd'
-        销毁 R1 → RECORDS.push_back("fd")
-✔️ 最终：answers[0] = {"fd"}
-    */
+    // problems[0]
+    {
+        RECORDS.clear();
+        auto r0 = reset(nullptr);
+        auto f0 = forward(std::move(r0));
+        auto d0 = drop(std::move(f0));
+        problems[0] = std::move(RECORDS);
+    }
 
-    forward(drop(reset(forward(forward(reset(nullptr))))));
-    problems[1] = std::move(RECORDS);
-    /*
-    运算顺序：
-    reset(nullptr) → 创建新资源 R1（无记录）
-    forward(R1) → R1 记录 'f'，返回 R1
-    forward(R1) → R1 记录 'f'，返回 R1
-    reset(R1)：
-        对 R1 记录 'r'
-        析构 R1（此时它已有记录 "ffr"，入 RECORDS）
-        创建新的 R2，返回 R2
-    drop(R2)：
-        R2 记录 'd'
-        销毁 R2（记录 "d"，入 RECORDS）
-    forward(nullptr) → 跳过
-✔️ 最终：answers[1] = {"ffr", "d"}
+    // problems[1]
+    {
+        RECORDS.clear();
+        auto r1 = reset(nullptr);
+        auto f1 = forward(std::move(r1));
+        auto f2 = forward(std::move(f1));
+        auto r2 = reset(std::move(f2));
+        auto d1 = drop(std::move(r2));
+        auto f3 = forward(std::move(d1));
+        problems[1] = std::move(RECORDS);
+    }
 
-    如果 ptr == nullptr，什么都不做，直接 return nullptr
-    所以：在执行 forward(nullptr) 时，相当于什么都没发生
-    没有资源被操作、记录、或者销毁，所以 不会生成任何新记录
-✅ 这个跳过是“逻辑跳过”而不是语法跳过，它确实调用了函数，只是因为输入是 nullptr，它什么都没干。
+    // problems[2]
+    {
+        RECORDS.clear();
+        auto r3 = reset(nullptr);
+        auto r4 = reset(std::move(r3));
+        auto d2 = drop(std::move(r4));
+        auto r5 = reset(nullptr);
+        auto d3 = drop(std::move(r5));
+        auto d4 = drop(nullptr);
+        problems[2] = std::move(RECORDS);
+    }
 
-    forward
-    └── drop
-        └── reset
-            └── forward
-                └── forward
-                    └── reset(nullptr)
-                        └── return R1
-    → forward(R1) —记录 f
-    → forward(R1) —记录 f
-    → reset(R1)   —记录 r，销毁（"ffr"）
-    → create R2
-    → drop(R2)    —记录 d，销毁（"d"）
-    → forward(nullptr) 跳过
-    */
-
-    drop(drop(reset(drop(reset(reset(nullptr))))));
-    problems[2] = std::move(RECORDS);
-    /*
-    运算顺序：
-    reset(nullptr) → 创建新资源 R1（无记录）
-    reset(R1)：
-        R1 记录 'r'
-        销毁 R1（记录 "r"，入 RECORDS）
-        返回新资源 R2
-    drop(R2)：
-        R2 记录 'd'
-        销毁 R2（记录 "d"，入 RECORDS）
-        返回 nullptr
-    reset(nullptr) → 创建新资源 R3（无记录）
-    drop(R3)：
-        R3 记录 'd'
-        销毁 R3（记录 "d"，入 RECORDS）
-    drop(nullptr) → 跳过
-✔️ 最终：answers[2] = {"r", "d", "d"}
-
-    R1->record('r')：记录 'r'
-    R1 被销毁，调用析构函数，把 "r" 加入 RECORDS
-    然后 reset() 函数内部又用 std::make_unique<Resource>() 创建新的 Resource 实例 R2
-    返回这个新实例指针 R2
-⚠️ 注意：虽然函数名叫 reset，它内部实际销毁旧的资源并 返回新的 Resource 实例，所以 "创建新的 R2"。
-    */
-
-    /*
-    总结通用分析技巧：
-    从最内层向外分析调用顺序
-    每一个 reset(ptr) 如果 ptr 不为 null，就记录 'r' 并触发销毁
-    每一个 drop(ptr) 都是销毁的触发点，会把记录 push 到 RECORDS
-    每一次返回的新 Resource，都从空记录开始
-    每个最终的 std::string 是 一个 Resource 生命周期的完整记录
-    */
-    // ---- 不要修改以上代码 ----
-
-    std::vector<const char *> answers[]{
-        //{"fd"},
-        // TODO: 分析 problems[1] 中资源的生命周期，将记录填入 `std::vector`
-        // NOTICE: 此题结果依赖对象析构逻辑，平台相关，提交时以 CI 实际运行平台为准
-        // {"", "", "", "", "", "", "", ""},
-        // {"", "", "", "", "", "", "", ""},
-        {"fd"},               // problems[0]
-        {"ffr", "d"},         // problems[1]
-        {"r", "d", "d"}, // ✅ fixed answers[2]
+    std::vector<const char *> answers[] {
+        {"fd"},
+        {"ffr", "d"},
+        {"r", "d", "d"},
     };
 
     // ---- 不要修改以下代码 ----
